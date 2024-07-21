@@ -10,15 +10,21 @@
 
 // export { supabase };
 
+// Load environment variables from .env file
+require('dotenv').config();
+
 import { createClient } from '@supabase/supabase-js';
 
+// Retrieve environment variables
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
+// Check if environment variables are set
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("supabaseUrl and supabaseAnonKey are required.");
+  throw new Error('supabaseUrl and supabaseAnonKey are required.');
 }
 
+// Create Supabase client
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export { supabase };
