@@ -1,7 +1,6 @@
-
 import React, { useState, useCallback } from "react";
 import axios from "axios";
-import { TextField, IconButton, Typography, Paper, Box } from "@mui/material";
+import { TextField, IconButton, Typography, Paper, Box, CircularProgress, Alert } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
 function SearchBookTitles({ onSelect }) {
@@ -42,7 +41,7 @@ function SearchBookTitles({ onSelect }) {
     try {
       await axios.post("http://localhost:5000/api/titlesApi", requestData);
     } catch (err) {
-      setError(err);
+      setError(err.message);
     }
     setIsLoading(false);
   }, []);
@@ -55,6 +54,8 @@ function SearchBookTitles({ onSelect }) {
 
   const fetchData = async (input) => {
     if (!input) return;
+    setIsLoading(true);
+    setError(null);
     try {
       const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=intitle:${input}&languageRestrict=en&key=${apiKey}`;
       const response = await fetch(apiUrl);
@@ -68,9 +69,11 @@ function SearchBookTitles({ onSelect }) {
       } else {
         setUniqueTitles(new Set());
       }
-    } catch (error) {
+    } catch (err) {
+      setError(err.message);
       setUniqueTitles(new Set());
     }
+    setIsLoading(false);
   };
 
   const handleDeleteTag = (tagToRemove) => {
@@ -89,6 +92,8 @@ function SearchBookTitles({ onSelect }) {
         variant="outlined"
         style={{ marginBottom: '10px' }}
       />
+      {isLoading && <CircularProgress />}
+      {error && <Alert severity="error">{error}</Alert>}
       {searchInput.length >= 2 && (
         <div>
           {searchOn && (

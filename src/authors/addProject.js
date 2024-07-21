@@ -104,7 +104,7 @@ const AddProject = () => {
       let pdfUrl = null;
 
       if (formState.projectPDF) {
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('author_docs')
           .upload(`${user.id}/${formState.projectPDF.name}`, formState.projectPDF);
 

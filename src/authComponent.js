@@ -56,7 +56,7 @@ function AuthComponent({ user_type, redirectUrl }) {
       }
 
       // Sign up with Supabase
-      const { user, error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
@@ -118,7 +118,7 @@ function AuthComponent({ user_type, redirectUrl }) {
   const handleSignIn = async () => {
 
     try {
-      const { user, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });

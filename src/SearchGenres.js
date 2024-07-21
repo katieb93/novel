@@ -7,13 +7,13 @@ const SearchGenres = ({ onSelect, setFormState, formState }) => {
     const [genres, setGenres] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGenres, setSelectedGenres] = useState([]);
-    const [maxSelections, setMaxSelections] = useState({
-        'broad_genre': 1,   
-        'category': 1,
-        'age_group': 2,   
-        'genre': 2,
-        'specific_genre': 2
-      });
+    // const [maxSelections, setMaxSelections] = useState({
+    //     'broad_genre': 1,   
+    //     'category': 1,
+    //     'age_group': 2,   
+    //     'genre': 2,
+    //     'specific_genre': 2
+    //   });
 
 
     // console.log("SET", setFormState)
