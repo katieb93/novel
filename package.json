@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "eslint . --no-warnings",
+    "build": "eslint . --max-warnings",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
