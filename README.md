@@ -4,6 +4,8 @@
 
 Novly is a comprehensive web-based platform designed to revolutionize the novel publishing industry. It connects authors seeking feedback and visibility for their manuscripts with agents and editors looking for promising projects to develop. Built with React and Node.js, Novly focuses equally on frontend and backend functionalities, utilizing multiple APIs and maintaining a robust database to manage user data and other relevant sources.
 
+Deployed here: https://novelysite.netlify.app/
+
 ## Table of Contents
 
 - [Novly](#novly)
