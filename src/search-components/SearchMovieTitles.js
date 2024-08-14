@@ -1,36 +1,36 @@
-
 import React, { useState, useCallback } from "react";
 import axios from "axios";
 import { TextField, IconButton, Typography, Paper, Box, CircularProgress } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
-function SearchTVTitles({ onSelect }) {
+function SearchMovieTitles({ onSelect, width = '100%' }) {
+  
   const [searchInput, setSearchInput] = useState('');
-  const [uniqueTV, setUniqueTV] = useState(new Set());
+  const [uniqueMovies, setUniqueMovies] = useState(new Set());
   const [searchOn, setSearchOn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [newTV, setNewTV] = useState({ TVTitle: "" });
+  const [newMovie, setNewMovie] = useState({ movieTitle: "" });
   const [tagList, setTagList] = useState([]);
 
-  const apiKey = '2e86fdf07364dbc226f56093c21d1a39';
+  const apiKey = process.env.REACT_APP_MOVIE_DB_API_KEY;
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTg2ZmRmMDczNjRkYmMyMjZmNTYwOTNjMjFkMWEzOSIsInN1YiI6IjY2NmYxZmY3MjlkZDA4ZjBhMGE2MzI4OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KLZsIbcES50gM8iqhHjhos8yHjYIFT7a9PvJ4K-Bwck'
+      Authorization: process.env.REACT_APP_MOVIE_DB_BEARER_TOKEN,
     }
   };
 
-  const fillInput = (TV) => {
-    if (!tagList.includes(TV)) {
-      setNewTV({ TVTitle: TV });
-      setSearchInput(TV);
+  const fillInput = (movie) => {
+    if (!tagList.includes(movie)) {
+      setNewMovie({ movieTitle: movie });
+      setSearchInput(movie);
       setSearchOn(false);
-      setUniqueTV(new Set());
-      setTagList(prevTags => [...prevTags, TV]);
+      setUniqueMovies(new Set());
+      setTagList(prevTags => [...prevTags, movie]);
       if (onSelect) {
-        onSelect(TV);
+        onSelect(movie);
       }
     }
   };
@@ -38,8 +38,8 @@ function SearchTVTitles({ onSelect }) {
   const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      await makeRequest(newTV);
-      setNewTV({ TVTitle: "" });
+      await makeRequest(newMovie);
+      setNewMovie({ movieTitle: "" });
     }
   };
 
@@ -47,7 +47,7 @@ function SearchTVTitles({ onSelect }) {
     setIsLoading(true);
     setError(null);
     try {
-      await axios.post("http://localhost:5000/api/TVApi", requestData);
+      await axios.post("http://localhost:5000/api/moviesApi", requestData);
     } catch (err) {
       setError(err);
     }
@@ -65,24 +65,22 @@ function SearchTVTitles({ onSelect }) {
     try {
       setIsLoading(true);
       setError(null);
-      const apiUrl = `https://api.themoviedb.org/3/search/tv?query=${input}&language=en-US&page=1&sort_by=vote_count.desc&include_adult=false&api_key=${apiKey}`;
-      console.log("API URL: ", apiUrl);
+      const apiUrl = `https://api.themoviedb.org/3/search/movie?query=${input}&language=en-US&page=1&sort_by=vote_count.desc&include_adult=false&api_key=${apiKey}`;
       const response = await fetch(apiUrl, options);
       if (!response.ok) {
         throw new Error(`Error fetching data: ${response.statusText}`);
       }
       const responseData = await response.json();
-      console.log("API Response: ", responseData);
       if (responseData && responseData.results) {
-        const TVList = responseData.results.map(item => item.name).filter(Boolean);
-        setUniqueTV(new Set(TVList));
+        const movieList = responseData.results.map(item => item.title).filter(Boolean);
+        setUniqueMovies(new Set(movieList));
       } else {
-        setUniqueTV(new Set());
+        setUniqueMovies(new Set());
       }
     } catch (error) {
       console.error(error);
-      setError('Failed to fetch TV shows');
-      setUniqueTV(new Set());
+      setError('Failed to fetch movies');
+      setUniqueMovies(new Set());
     } finally {
       setIsLoading(false);
     }
@@ -93,11 +91,11 @@ function SearchTVTitles({ onSelect }) {
   };
 
   return (
-    <Paper className='search-tv-div' elevation={3} style={{ padding: '16px' }}>
-      <TextField 
+    <Paper className='search-movies-div' elevation={3} style={{ padding: '16px', width }}>
+      <TextField
         type="search"
         fullWidth
-        placeholder="Search TV..."
+        placeholder="Search movies..."
         onChange={handleChange}
         value={searchInput}
         onKeyDown={handleKeyDown}
@@ -108,15 +106,17 @@ function SearchTVTitles({ onSelect }) {
       {searchInput.length >= 2 && !isLoading && (
         <div>
           {searchOn && (
-            <ul className='TV-results' style={{ listStyleType: 'none', padding: 0 }}>
-              {uniqueTV.size > 0 ? (
-                Array.from(uniqueTV).map((TV) => (
-                  <li key={TV} onClick={() => fillInput(TV)} style={{ cursor: 'pointer' }}>
-                    {TV}
+            <ul className='movie-results' style={{ listStyleType: 'none', padding: 0 }}>
+              {uniqueMovies.size > 0 ? (
+                Array.from(uniqueMovies).map((movie) => (
+                  <li key={movie} onClick={() => fillInput(movie)} style={{ cursor: 'pointer' }}>
+                    {movie}
                   </li>
                 ))
               ) : (
-                <Typography variant="body1" color="textSecondary" style={{ paddingLeft: '16px' }}>No TV found.</Typography>
+                <Typography variant="body1" color="textSecondary" style={{ paddingLeft: '16px' }}>
+                  No movies found.
+                </Typography>
               )}
             </ul>
           )}
@@ -124,7 +124,7 @@ function SearchTVTitles({ onSelect }) {
       )}
       <Box mb={2}>
         <Typography variant="h6" style={{ fontWeight: 'bold', textAlign: 'left', fontSize: '14px', textTransform: 'uppercase' }}>
-          Selected TV Shows
+          Movie Comps
         </Typography>
         <Box display="flex" flexWrap="wrap">
           {tagList.map((tag, index) => (
@@ -170,4 +170,4 @@ function SearchTVTitles({ onSelect }) {
   );
 }
 
-export default SearchTVTitles;
+export default SearchMovieTitles;

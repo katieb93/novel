@@ -31,7 +31,7 @@ const AuthorsLogIn = () => {
         <Typography variant="h4" gutterBottom>
           Authors Login
         </Typography>
-        <AuthComponent user_type={userType} redirectUrl="../authors/addProject" />
+        <AuthComponent user_type={userType} redirectUrl="../authors/Dashboard" />
       </Box>
     </Container>
   );

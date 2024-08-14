@@ -3,7 +3,9 @@ import axios from "axios";
 import { TextField, IconButton, Typography, Paper, Box, CircularProgress, Alert } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
-function SearchBookTitles({ onSelect }) {
+function SearchBookTitles({ onSelect, width = '100%' }) {
+  
+
   const [searchInput, setSearchInput] = useState('');
   const [uniqueTitles, setUniqueTitles] = useState(new Set());
   const [searchOn, setSearchOn] = useState(false);
@@ -12,7 +14,7 @@ function SearchBookTitles({ onSelect }) {
   const [newTitle, setNewTitle] = useState({ titleName: "" });
   const [tagList, setTagList] = useState([]);
 
-  const apiKey = 'AIzaSyDVmj3OG-NQ-DC3QJSxEMeZ1nHHzgQIPCw';
+  const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
 
   const fillInput = (title) => {
     if (!tagList.includes(title)) {
@@ -81,7 +83,7 @@ function SearchBookTitles({ onSelect }) {
   };
 
   return (
-    <Paper className='search-titles-div' elevation={3} style={{ padding: '16px' }}>
+    <Paper className='search-titles-div' elevation={3} style={{ padding: '16px', width }}>
       <TextField
         type="search"
         fullWidth
@@ -113,7 +115,7 @@ function SearchBookTitles({ onSelect }) {
       )}
       <Box mb={2}>
         <Typography variant="h6" style={{ fontWeight: 'bold', textAlign: 'left', fontSize: '14px', textTransform: 'uppercase' }}>
-          Selected Titles
+          Book Comps
         </Typography>
         <Box display="flex" flexWrap="wrap">
           {tagList.map((tag, index) => (

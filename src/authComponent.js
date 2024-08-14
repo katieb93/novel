@@ -134,9 +134,9 @@ function AuthComponent({ user_type, redirectUrl }) {
 
   
         if (user_type === 'author') {
-          navigate('../authors/addProject');
+          navigate('../authors/Dashboard');
         } else {
-          navigate('../publishing/addSearch');
+          navigate('/publishing/PubDashboard');
         }
       }
     } catch (error) {

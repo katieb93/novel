@@ -36,12 +36,26 @@ import AuthorsLogIn from './authors/authorsLogIn';
 import AddProject from './authors/addProject';
 import PublishingLogIn from './publishing/publishingLogIn';
 import AddSearch from './publishing/addSearch';
+import ManuscriptSearch from './manuscriptSearch/manuscriptSearch';
+import Dashboard from './authors/Dashboard';
+import AuthorProfile from './authors/AuthorProfile';
+import PublicAuthorProfile from './authors/PublicAuthorProfile'; // New public profile component
+
+
+import PubDashboard from './publishing/PubDashboard';
+import PubProfile from './publishing/PubProfile';
+
+
+import Account from './Account';
+import Navbar from './NavBar';
 
 import './App.css';
+
 
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <div className='app-div'>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -49,11 +63,19 @@ function App() {
 
           <Route path="/authors/authorsLogIn" element={<AuthorsLogIn />} />
           <Route path="/authors/addProject" element={<AddProject />} />
+          <Route path="/authors/Dashboard" element={<Dashboard />} />
+          <Route path="/authors/AuthorProfile" element={<AuthorProfile />} />
+          <Route path="/profile/:name" element={<PublicAuthorProfile />} /> {/* Public profile */}
+
 
           <Route path="/publishing/publishingLogIn" element={<PublishingLogIn />} />
           <Route path="/publishing/addSearch" element={<AddSearch />} />
+          <Route path="/publishing/PubDashboard" element={<PubDashboard />} />
+          <Route path="/publishing/PubProfile" element={<PubProfile />} />
 
-          
+          <Route path="Account" element={<Account />} />
+          {/* <Route path="NavBar" element={<Navbar />} /> */}
+          <Route path="manuscriptSearch" element={<ManuscriptSearch />} />
 
           {/* // <Route path="/publishing/login" element={<LogIn />} />
           // <Route path="/authors/authorsCreateAccount" element={<AuthorsCreateAccount />} />

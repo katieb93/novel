@@ -1,28 +1,35 @@
 import React, { useState, useCallback } from "react";
 import axios from "axios";
-import { TextField, IconButton, Typography, Paper, Box, CircularProgress, Alert } from "@mui/material";
+import { TextField, IconButton, Typography, Paper, Box, CircularProgress } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
-function SearchAuthors({ onSelect }) {
+function SearchTVTitles({ onSelect, width = '100%' }) {
   const [searchInput, setSearchInput] = useState('');
-  const [uniqueAuthors, setUniqueAuthors] = useState(new Set());
+  const [uniqueTV, setUniqueTV] = useState(new Set());
   const [searchOn, setSearchOn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [newAuthor, setNewAuthor] = useState({ authorName: "" });
+  const [newTV, setNewTV] = useState({ TVTitle: "" });
   const [tagList, setTagList] = useState([]);
 
-  const apiKey = 'AIzaSyDVmj3OG-NQ-DC3QJSxEMeZ1nHHzgQIPCw';
+  const apiKey = process.env.REACT_APP_MOVIE_DB_API_KEY;
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: process.env.REACT_APP_MOVIE_DB_BEARER_TOKEN,
+    }
+  };
 
-  const fillInput = (author) => {
-    if (!tagList.includes(author)) {
-      setNewAuthor({ authorName: author });
-      setSearchInput(author);
+  const fillInput = (TV) => {
+    if (!tagList.includes(TV)) {
+      setNewTV({ TVTitle: TV });
+      setSearchInput(TV);
       setSearchOn(false);
-      setUniqueAuthors(new Set());
-      setTagList(prevTags => [...prevTags, author]);
+      setUniqueTV(new Set());
+      setTagList(prevTags => [...prevTags, TV]);
       if (onSelect) {
-        onSelect(author);
+        onSelect(TV);
       }
     }
   };
@@ -30,8 +37,8 @@ function SearchAuthors({ onSelect }) {
   const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      await makeRequest(newAuthor);
-      setNewAuthor({ authorName: "" });
+      await makeRequest(newTV);
+      setNewTV({ TVTitle: "" });
     }
   };
 
@@ -39,9 +46,9 @@ function SearchAuthors({ onSelect }) {
     setIsLoading(true);
     setError(null);
     try {
-      await axios.post("http://localhost:5000/api/authorsApi", requestData);
+      await axios.post("http://localhost:5000/api/TVApi", requestData);
     } catch (err) {
-      setError(err.message);
+      setError(err);
     }
     setIsLoading(false);
   }, []);
@@ -54,29 +61,30 @@ function SearchAuthors({ onSelect }) {
 
   const fetchData = async (input) => {
     if (!input) return;
-    setIsLoading(true);
-    setError(null);
     try {
-      const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${input}&languageRestrict=en&key=${apiKey}`;
-      const response = await fetch(apiUrl);
+      setIsLoading(true);
+      setError(null);
+      const apiUrl = `https://api.themoviedb.org/3/search/tv?query=${input}&language=en-US&page=1&sort_by=vote_count.desc&include_adult=false&api_key=${apiKey}`;
+      console.log("API URL: ", apiUrl);
+      const response = await fetch(apiUrl, options);
       if (!response.ok) {
         throw new Error(`Error fetching data: ${response.statusText}`);
       }
       const responseData = await response.json();
-      if (responseData && responseData.items) {
-        const authorList = responseData.items
-          .map(item => item.volumeInfo.authors)
-          .flat()
-          .filter(Boolean);
-        setUniqueAuthors(new Set(authorList));
+      console.log("API Response: ", responseData);
+      if (responseData && responseData.results) {
+        const TVList = responseData.results.map(item => item.name).filter(Boolean);
+        setUniqueTV(new Set(TVList));
       } else {
-        setUniqueAuthors(new Set());
+        setUniqueTV(new Set());
       }
-    } catch (err) {
-      setError(err.message);
-      setUniqueAuthors(new Set());
+    } catch (error) {
+      console.error(error);
+      setError('Failed to fetch TV shows');
+      setUniqueTV(new Set());
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleDeleteTag = (tagToRemove) => {
@@ -84,11 +92,11 @@ function SearchAuthors({ onSelect }) {
   };
 
   return (
-    <Paper className='search-authors-div' elevation={3} style={{ padding: '16px' }}>
-      <TextField
+    <Paper className='search-tv-div' elevation={3} style={{ padding: '16px', width }}>
+      <TextField 
         type="search"
         fullWidth
-        placeholder="Search authors..."
+        placeholder="Search TV..."
         onChange={handleChange}
         value={searchInput}
         onKeyDown={handleKeyDown}
@@ -96,19 +104,18 @@ function SearchAuthors({ onSelect }) {
         style={{ marginBottom: '10px' }}
       />
       {isLoading && <CircularProgress />}
-      {error && <Alert severity="error">{error}</Alert>}
-      {searchInput.length >= 2 && (
+      {searchInput.length >= 2 && !isLoading && (
         <div>
           {searchOn && (
-            <ul className='author-results' style={{ listStyleType: 'none', padding: 0 }}>
-              {uniqueAuthors.size > 0 ? (
-                Array.from(uniqueAuthors).map((author) => (
-                  <li key={author} onClick={() => fillInput(author)} style={{ cursor: 'pointer' }}>
-                    {author}
+            <ul className='TV-results' style={{ listStyleType: 'none', padding: 0 }}>
+              {uniqueTV.size > 0 ? (
+                Array.from(uniqueTV).map((TV) => (
+                  <li key={TV} onClick={() => fillInput(TV)} style={{ cursor: 'pointer' }}>
+                    {TV}
                   </li>
                 ))
               ) : (
-                <Typography variant="body1" color="textSecondary" style={{ paddingLeft: '16px' }}>No authors found.</Typography>
+                <Typography variant="body1" color="textSecondary" style={{ paddingLeft: '16px' }}>No TV found.</Typography>
               )}
             </ul>
           )}
@@ -116,7 +123,7 @@ function SearchAuthors({ onSelect }) {
       )}
       <Box mb={2}>
         <Typography variant="h6" style={{ fontWeight: 'bold', textAlign: 'left', fontSize: '14px', textTransform: 'uppercase' }}>
-          Selected Authors
+          TV Comps
         </Typography>
         <Box display="flex" flexWrap="wrap">
           {tagList.map((tag, index) => (
@@ -153,8 +160,13 @@ function SearchAuthors({ onSelect }) {
           ))}
         </Box>
       </Box>
+      {error && (
+        <Typography variant="body1" color="error" style={{ marginTop: '10px' }}>
+          {error}
+        </Typography>
+      )}
     </Paper>
   );
 }
 
-export default SearchAuthors;
+export default SearchTVTitles;

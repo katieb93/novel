@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Paper, Typography, IconButton, TextField, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import GenreData from './openGenres'; // Replace with your actual path to GenreData
+import GenreData from '../openGenres'; // Replace with your actual path to GenreData
 
 const SearchGenres = ({ onSelect, setFormState, formState }) => {
     const [genres, setGenres] = useState({});

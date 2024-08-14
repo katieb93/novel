@@ -17,6 +17,8 @@
 
 // export default PublishingLogIn;
 
+
+
 import React from 'react';
 import { Container, Typography, Box } from '@mui/material';
 import AuthComponent from '../authComponent';
@@ -30,7 +32,8 @@ const PublishingLogIn = () => {
         <Typography variant="h4" gutterBottom>
           Publishing Login
         </Typography>
-        <AuthComponent user_type={userType} redirectUrl="../publishing/addSearch" />
+        <AuthComponent user_type={userType} redirectUrl="/publishing/PubDashboard" />
+
       </Box>
     </Container>
   );

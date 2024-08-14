@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Paper, Typography } from '@mui/material';
-import subGenres from './subGenres'; // Importing the static subGenres object
+import subGenres from '../subGenres'; // Importing the static subGenres object
 
 const SearchSubGenres = ({ onSelect }) => {
   const [searchTerm, setSearchTerm] = useState('');

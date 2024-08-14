@@ -155,8 +155,9 @@ const Home = () => {
                         First impressions for lasting success
                     </Typography>
                     <Typography variant="h1" component="h1" gutterBottom>
-                        NOVLY
+                        NOVELY
                     </Typography>
+
                     <Button 
                         variant="contained" 
                         color="primary" 
